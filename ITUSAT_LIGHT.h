@@ -10,6 +10,7 @@
 #define __ITUSAT_ENERGIA__ITUSAT_LIGHT__
 
 #include <inttypes.h>
+#include <Energia.h>
 
 #define LIGHT_REFERENCEBIRIM (3.00/1024)
 

@@ -21,7 +21,7 @@ void ITUSAT_LIGHT::begin(uint8_t pin)
     
 }
 
-float ITUSAT_LIGHT::readTemperature()
+float ITUSAT_LIGHT::readLight()
 {
 
     rawLight =  analogRead(selectedPin);    // read the input pin

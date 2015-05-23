@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>27DA4595-F93A-4367-B086-A61CDB793967</string>
+	<key>IDESourceControlProjectName</key>
+	<string>I2C_Scanner</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>972FE47098E58985ADD7CB1D98114E66C944D339</key>
+		<string>https://github.com/Refikcanmalli/ITUSAT.git</string>
+		<key>CF6C7E866694A6480EAACF711AB95BB42C88382E</key>
+		<string>https://github.com/Refikcanmalli/RCM_TMP112.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>examples/I2C_Scanner.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>972FE47098E58985ADD7CB1D98114E66C944D339</key>
+		<string>../../..</string>
+		<key>CF6C7E866694A6480EAACF711AB95BB42C88382E</key>
+		<string>../../../../../../../../../Applications/Energia.app/Contents/Resources/Java/hardware/msp430/libraries/RCM_TMP112</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Refikcanmalli/ITUSAT.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>972FE47098E58985ADD7CB1D98114E66C944D339</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>972FE47098E58985ADD7CB1D98114E66C944D339</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ITUSAT</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>CF6C7E866694A6480EAACF711AB95BB42C88382E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>RCM_TMP112</string>
+		</dict>
+	</array>
+</dict>
+</plist>

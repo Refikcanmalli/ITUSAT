@@ -14,32 +14,32 @@ ITUSAT_XBEE::ITUSAT_XBEE()
     
 }
 
-ITUSAT_XBEE::begin()
+void ITUSAT_XBEE::begin()
 {
 
 }
 
-ITUSAT_XBEE::addEnvelope(uint8_t mode)
+void ITUSAT_XBEE::addEnvelope(uint8_t mode)
 {
 
 }
 
-ITUSAT_XBEE::addData(int data)
+void ITUSAT_XBEE::addData(int data)
 {
 
 }
 
-ITUSAT_XBEE::addData(float data)
-{
-    
-}
-
-ITUSAT_XBEE::addData(double data)
+void ITUSAT_XBEE::addData(float data)
 {
     
 }
 
-ITUSAT_XBEE::addCRC()
+void ITUSAT_XBEE::addData(double data)
+{
+    
+}
+
+void ITUSAT_XBEE::addCRC()
 {
 
 

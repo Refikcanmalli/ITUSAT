@@ -13,6 +13,7 @@
 #include "ITUSAT_EEPROM.h"
 #include "ITUSAT_RTC.h"
 #include "ITUSAT_NTC.h"
+#include "ITUSAT_LIGHT.h"
 #include "BMP085.h"
 #include "ADXL345.h"
 #include "ITUSAT_XBEE.h"
@@ -37,6 +38,7 @@ public:
     ITUSAT_EEPROM eeprom;
     ITUSAT_CAMERA camera;
     ITUSAT_NTC thermistor1,thermistor2;
+    ITUSAT_LIGHT light;
     ITUSAT_LM35 tempIN,tempOUT;
     ITUSAT_BATTERY battery;
     ADXL345 accelometer;
