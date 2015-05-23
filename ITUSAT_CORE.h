@@ -23,12 +23,13 @@
 #include "I2Cdev.h"
 #include "ITUSAT_GPS.h"
 
-#define THERMISTOR1_PIN         P1_5
-#define THERMISTOR2_PIN         P1_6
-#define BATTERY_PIN             P1_3
-#define LM35_PIN1               P1_3
-#define LM35_PIN2               P1_3
-#define GPS_PIN                 P1_3
+#define PIN_THERMISTOR1         P1_5
+#define PIN_THERMISTOR2         P1_6
+#define PIN_BATTERY             P1_3
+#define PIN_LM35_1              P1_3
+#define PIN_LM35_2              P1_3
+#define PIN_GPS                 P1_3
+#define PIN_LIGHT               P1_6
 
 class ITUSAT_CORE
 {
@@ -41,7 +42,7 @@ public:
     ITUSAT_LIGHT light;
     ITUSAT_LM35 tempIN,tempOUT;
     ITUSAT_BATTERY battery;
-    ADXL345 accelometer;
+    ADXL345 adxl;
     BMP085 bmp;
     
     uint8_t     FSWstatus;

@@ -13,13 +13,8 @@
 void ITUSAT_CORE::startModules()
 
 {
-    
+    // Genel baslangic
     eepromLockCheck = eeprom.readLock();
-    if (eepromLockCheck != LOCK_EEPROM) {
-        FSWstatus = 1;
-        eeprom.writeFswState(FSWstatus);
-        eeprom.writeLock(LOCK_EEPROM);
-    }
     rtc.begin();
     uint8_t u8Status = rtc.get();
     
@@ -27,10 +22,31 @@ void ITUSAT_CORE::startModules()
     {
         timeofStart = rtc.time.hour*3600 + rtc.time.min*60 +  rtc.time.sec;
     }
+    // Mission daha once baslamis mi kontrolu
+    if (eepromLockCheck != MISSION_LOCK_EEPROM) {
+        // FSW sifirla ilk baslangic saatini kaydet
+        FSWstatus = 1;
+        eeprom.writeFswState(FSWstatus);
+        eeprom.writeLock(MISSION_LOCK_EEPROM);
+        eeprom.writeHours(rtc.time.hour);
+        eeprom.writeMinutes(rtc.time.min);
+        eeprom.writeSeconds(rtc.time.sec);
+    }
+    else
+    {
+        // Power gitmis
+        timeofStart = eeprom.readHours()*3600 + eeprom.readMinutes()*60 +  eeprom.readSeconds();
+        FSWstatus = eeprom.readFswState();
+    }
+    
     //thermistor1.begin(THERMISTOR1_PIN);
     //thermistor2.begin(THERMISTOR2_PIN);
-    battery.begin(BATTERY_PIN);
+    tempIN.begin(PIN_LM35_1);
+    tempOUT.begin(PIN_LM35_2);
+    battery.begin(PIN_BATTERY);
+    light.begin(PIN_LIGHT);
     bmp.initialize();
+    adxl.initialize();
 
 }
 
