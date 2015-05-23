@@ -13,8 +13,6 @@
 void ITUSAT_CORE::startModules()
 
 {
-
-#ifdef EEPROMLOCKENABLED
     
     eepromLockCheck = eeprom.readLock();
     if (eepromLockCheck != LOCK_EEPROM) {
@@ -22,12 +20,6 @@ void ITUSAT_CORE::startModules()
         eeprom.writeFswState(FSWstatus);
         eeprom.writeLock(LOCK_EEPROM);
     }
-#endif
-#ifndef EEPROMLOCKENABLED
-    
-    FSWstatus = 0;
-    
-#endif
     rtc.begin();
     uint8_t u8Status = rtc.get();
     
@@ -35,8 +27,8 @@ void ITUSAT_CORE::startModules()
     {
         timeofStart = rtc.time.hour*3600 + rtc.time.min*60 +  rtc.time.sec;
     }
-    thermistor1.begin(THERMISTOR1_PIN);
-    thermistor2.begin(THERMISTOR2_PIN);
+    //thermistor1.begin(THERMISTOR1_PIN);
+    //thermistor2.begin(THERMISTOR2_PIN);
     battery.begin(BATTERY_PIN);
     bmp.initialize();
 

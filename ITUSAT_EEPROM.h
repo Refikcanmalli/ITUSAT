@@ -23,10 +23,9 @@
 #define MEM_TIME_SECONDS         0x06
 #define MEM_TEST_EEPROM          0x07
 
-#define LOCK_EEPROM              0xFF
-#define UNLOCK_EEPROM            0xAA
+#define MISSION_LOCK_EEPROM      0xFF
+#define MISSION_UNLOCK_EEPROM    0x11
 
-#define EEPROMLOCKENABLED        0x01
 
 class ITUSAT_EEPROM
 {

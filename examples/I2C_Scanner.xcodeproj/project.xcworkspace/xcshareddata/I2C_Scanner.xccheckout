@@ -22,7 +22,7 @@
 		<key>972FE47098E58985ADD7CB1D98114E66C944D339</key>
 		<string>../../..</string>
 		<key>CF6C7E866694A6480EAACF711AB95BB42C88382E</key>
-		<string>../../../../../../../../../Applications/Energia.app/Contents/Resources/Java/hardware/msp430/libraries/RCM_TMP112</string>
+		<string>../../../../Applications/Energia.app/Contents/Resources/Java/hardware/msp430/libraries/RCM_TMP112</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/Refikcanmalli/ITUSAT.git</string>
