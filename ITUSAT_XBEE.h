@@ -26,7 +26,7 @@ public:
     void addData(int);
     void addData(float);
     void addData(double);
-    void addCRC();
+    void addCRC(uint8_t);
     void sendTelemetry();
     
 };

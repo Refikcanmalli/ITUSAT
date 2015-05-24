@@ -47,15 +47,16 @@ public:
     ADXL345 adxl;
     BMP085 bmp;
     
-    uint8_t     FSWstatus;
-    uint8_t     eepromLockCheck ;
-    float       insideTemperature;
-    float       outsideTemperature;
-    float       altitude;
-    int         timeofStart ;
-    float       accX;
-    float       accY;
-    float       accZ;
+    uint8_t         FSWstatus;
+    uint8_t         eepromLockCheck ;
+    float           insideTemperature;
+    float           outsideTemperature;
+    float           altitude;
+    unsigned long   timeofStart ;
+    unsigned long   timeNow ;
+    float           accX;
+    float           accY;
+    float           accZ;
     
     void        startModules();
     uint8_t     calculateCRC();

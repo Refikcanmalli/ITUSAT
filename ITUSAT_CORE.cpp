@@ -52,7 +52,8 @@ void ITUSAT_CORE::startModules()
 
 int ITUSAT_CORE::rtc_millis()
 {
-    int dummy;
+    
+    unsigned long  dummy;
     uint8_t u8Status = rtc.get();
     if (!u8Status)
     {
@@ -61,7 +62,6 @@ int ITUSAT_CORE::rtc_millis()
     
     return dummy - timeofStart;
 
-    
 }
 
 void ITUSAT_CORE::rtc_print_time(char *dateString)
