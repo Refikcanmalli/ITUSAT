@@ -50,7 +50,7 @@ void ITUSAT_CORE::startModules()
 
 }
 
-int ITUSAT_CORE::rtc_millis()
+unsigned long ITUSAT_CORE::rtc_millis()
 {
     
     unsigned long  dummy;

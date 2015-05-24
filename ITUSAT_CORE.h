@@ -58,12 +58,12 @@ public:
     float           accY;
     float           accZ;
     
-    void        startModules();
-    uint8_t     calculateCRC();
-    int         rtc_millis();
-    void        rtc_set_time();
-    void        rtc_print_time(char *);
-    void        rtc_set_calibration();
+    void            startModules();
+    uint8_t         calculateCRC();
+    unsigned long   rtc_millis();
+    void            rtc_set_time();
+    void            rtc_print_time(char *);
+    void            rtc_set_calibration();
 
 };
 
