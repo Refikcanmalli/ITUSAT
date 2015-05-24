@@ -31,6 +31,8 @@
 #define PIN_GPS                 P1_3
 #define PIN_LIGHT               P1_6
 
+
+
 class ITUSAT_CORE
 {
 public:
@@ -64,7 +66,7 @@ public:
 
 };
 
-extern ITUSAT_CORE Core;
+
 
 
 

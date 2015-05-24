@@ -3,7 +3,7 @@
 
 // string to store current time/date
 char dateString[50];
-
+ITUSAT_CORE Core;
 
 
 
