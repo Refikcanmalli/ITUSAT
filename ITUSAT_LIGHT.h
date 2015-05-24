@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <Energia.h>
 
-#define LIGHT_REFERENCEBIRIM    (3.00/1024)
+#define LIGHT_REFERENCEBIRIM    (3.30/1024)
 #define LIGHT_TRESHOLD          (500)
 #define RESISTOR_10K            0x01
 //#define RESISTOR_100K         0x02
