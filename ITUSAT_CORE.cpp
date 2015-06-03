@@ -11,7 +11,6 @@
 
 
 void ITUSAT_CORE::startModules()
-
 {
     // Genel baslangic
     eepromLockCheck = eeprom.readLock();
@@ -25,7 +24,7 @@ void ITUSAT_CORE::startModules()
     // Mission daha once baslamis mi kontrolu
     if (eepromLockCheck != MISSION_LOCK_EEPROM) {
         // FSW sifirla ilk baslangic saatini kaydet
-        FSWstatus = 1;
+        FSWstatus = 0;
         eeprom.writeFswState(FSWstatus);
         eeprom.writeLock(MISSION_LOCK_EEPROM);
         eeprom.writeHours(rtc.time.hour);
@@ -47,6 +46,8 @@ void ITUSAT_CORE::startModules()
     light.begin(PIN_LIGHT);
     bmp.initialize();
     adxl.initialize();
+    buzzer.begin(PIN_BUZZER);
+    warnReady();
 
 }
 
@@ -144,6 +145,7 @@ void ITUSAT_CORE::rtc_set_calibration()
     
     
 }
+
 void ITUSAT_CORE::rtc_set_time()
 {
     
@@ -244,6 +246,93 @@ void ITUSAT_CORE::rtc_set_time()
         Serial.print(u8Status, HEX);
         Serial.println(".");
     }
+
+
+}
+
+void ITUSAT_CORE::toggle(uint8_t pin , int mil)
+{
+    digitalWrite(pin, HIGH);
+    delay(mil);
+    digitalWrite(pin, LOW);
+    delay(mil);
+    digitalWrite(pin, HIGH);
+    delay(mil);
+    digitalWrite(pin, LOW);
+}
+
+void ITUSAT_CORE::beginLEDS()
+{
+    pinMode(PIN_LED1, OUTPUT);
+    pinMode(PIN_LED2, OUTPUT);
+    pinMode(PIN_LED3, OUTPUT);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, LOW);
+    
+}
+
+void ITUSAT_CORE::warnReady()
+{
+    
+    digitalWrite(PIN_LED1, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED3, LOW);
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(100);
+    digitalWrite(PIN_BUZZER, LOW);
+    delay(700);
+    digitalWrite(PIN_LED1, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED3, LOW);
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(100);
+    digitalWrite(PIN_BUZZER, LOW);
+    delay(700);
+    digitalWrite(PIN_LED1, HIGH);
+    digitalWrite(PIN_LED2, HIGH);
+    digitalWrite(PIN_LED3, HIGH);
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, LOW);
+    digitalWrite(PIN_BUZZER, LOW);
+    delay(100);
+    digitalWrite(PIN_LED1, HIGH);
+    digitalWrite(PIN_LED2, HIGH);
+    digitalWrite(PIN_LED3, HIGH);
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, LOW);
+    digitalWrite(PIN_BUZZER, LOW);
+    delay(100);
+    digitalWrite(PIN_LED1, HIGH);
+    digitalWrite(PIN_LED2, HIGH);
+    digitalWrite(PIN_LED3, HIGH);
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(100);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED3, LOW);
+    digitalWrite(PIN_BUZZER, LOW);
+    delay(100);
+
+
 
 
 }

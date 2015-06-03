@@ -24,7 +24,7 @@ float ITUSAT_LM35::readTemperature()
 {
     rawTemperature = analogRead(selectedPin);
     // Convert the thermal stress value to resistance
-    rawTemperature =  (3.3 * rawTemperature * 100.0)/1024.0;
+    rawTemperature =  (3.3 * rawTemperature * 100.0)/4096.0;
     return rawTemperature;
     
 }

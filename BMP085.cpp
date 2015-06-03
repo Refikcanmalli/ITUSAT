@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 #include "BMP085.h"
 
+
 /**
  * Default constructor, uses default I2C device address.
  * @see BMP085_DEFAULT_ADDRESS
@@ -268,5 +269,5 @@ float BMP085::getPressure() {
 }
 
 float BMP085::getAltitude(float pressure, float seaLevelPressure) {
-    return 44330 * (1.0 - pow(pressure / seaLevelPressure, 0.1903));
+    return 44330 * (1.0 - powf(pressure / seaLevelPressure, 0.1903));
 }

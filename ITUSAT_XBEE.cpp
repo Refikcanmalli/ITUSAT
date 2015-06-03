@@ -16,47 +16,54 @@ ITUSAT_XBEE::ITUSAT_XBEE()
 
 void ITUSAT_XBEE::begin()
 {
-
+    Serial1.begin(9600);
 }
 
 void ITUSAT_XBEE::addEnvelope(uint8_t mode)
 {
     if (mode == 0)
         
-        Serial.print("!(");
+        Serial1.print("!(");
     
     else
         
-        Serial.print(")!");
+        Serial1.print(")!\n");
         
 }
 
 void ITUSAT_XBEE::addData(int data)
 {
-    Serial.print("\"");
-    Serial.print(data);
-    Serial.print("\",");
+    Serial1.print("\"");
+    Serial1.print(data);
+    Serial1.print("\",");
 }
 
 void ITUSAT_XBEE::addData(float data)
 {
-    Serial.print("\"");
-    Serial.print(data);
-    Serial.print("\",");
+    Serial1.print("\"");
+    Serial1.print(data);
+    Serial1.print("\",");
 }
 
 void ITUSAT_XBEE::addData(double data)
 {
-    Serial.print("\"");
-    Serial.print(data);
-    Serial.print("\",");
+    Serial1.print("\"");
+    Serial1.print(data);
+    Serial1.print("\",");
+}
+
+void ITUSAT_XBEE::addData(unsigned long data)
+{
+    Serial1.print("\"");
+    Serial1.print(data);
+    Serial1.print("\",");
 }
 
 void ITUSAT_XBEE::addCRC(uint8_t crcData)
 {
-    Serial.print("\"");
-    Serial.print(crcData);
-    Serial.print("\"");
+    Serial1.print("\"");
+    Serial1.print(crcData);
+    Serial1.print("\"");
     
 
 }

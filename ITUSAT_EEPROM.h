@@ -26,10 +26,16 @@
 #define MISSION_LOCK_EEPROM      0xFF
 #define MISSION_UNLOCK_EEPROM    0x11
 
+#define SIZE_FLOAT               4
+#define SIZE_INT                 2
+#define SIZE_LONG                4
+#define SIZE_CHAR                1
+
 
 class ITUSAT_EEPROM
 {
 public:
+    byte temp[SIZE_FLOAT];
     
     uint8_t readFswState();
     uint8_t readActiveState();
@@ -49,6 +55,18 @@ public:
     uint8_t testEEPROM();
     uint8_t readData(int);
     void writeData(int, uint8_t);
+    
+    //EXP
+    float   readFloat(int);
+    long    readLong(int);
+    int     readInt(int);
+    char    readChar(int);
+    
+    void    writeLong(int,long);
+    void    writeInt(int,int);
+    void    writeChar(int,char);
+    void    writeFloat(int,float);
+    
 };
 
 extern ITUSAT_EEPROM EEPROM;

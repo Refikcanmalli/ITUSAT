@@ -42,6 +42,17 @@ uint8_t ITUSAT_EEPROM::readLock()
     return readData(MEM_EEPROM_LOCK);
 }
 
+float ITUSAT_EEPROM::readFloat(int address)
+
+{
+    float temp_f;
+    for (char i = 0; i<SIZE_FLOAT; i++) {
+        temp[i] = readData(address++);
+    }
+    temp_f = (temp[0] << 24) + (temp[1] << 16) + (temp[2] << 8) + temp[3];
+    return temp_f;
+}
+
 
 
 void  ITUSAT_EEPROM::writeFswState(uint8_t data)
@@ -73,6 +84,25 @@ void  ITUSAT_EEPROM::writeLock(uint8_t data)
 {
     writeData(MEM_EEPROM_LOCK, data);
 }
+
+void  ITUSAT_EEPROM::writeFloat(int address,float data)
+{
+   
+    union {
+        float float_variable;
+        char bytes_array[SIZE_FLOAT];
+    } my_union;
+    
+    my_union.float_variable = data ;
+    memcpy(temp, my_union.bytes_array, 4);
+    char counter = 0 ;
+    for (counter = 0; counter <SIZE_FLOAT; counter++) {
+        writeData(address++, temp[counter]);
+    }
+    
+}
+
+
 
 
 
