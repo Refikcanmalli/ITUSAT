@@ -25,5 +25,5 @@ float ITUSAT_BATTERY::readVoltage()
     
     rawVoltage =  analogRead(selectedPin);    // read the input pin
     batteryVoltage = (BATTERY_REFERENCEBIRIM) * rawVoltage ;
-    return batteryVoltage;
+    return batteryVoltage * 2;
 }

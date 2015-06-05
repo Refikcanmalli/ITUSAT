@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include "Energia.h"
 
-#define BATTERY_REFERENCEBIRIM (3.00/1024)
+#define BATTERY_REFERENCEBIRIM (3.20/4096)
 
 class ITUSAT_BATTERY {
     

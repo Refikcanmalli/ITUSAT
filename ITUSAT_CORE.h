@@ -25,18 +25,21 @@
 #include "ITUSAT_GPS.h"
 #include "ITUSAT_BUZZER.h"
 
+#define TEAM_NUMBER             3806
+
 #define PIN_THERMISTOR1         P1_5
 #define PIN_THERMISTOR2         P1_6
-#define PIN_BATTERY             P1_3
 #define PIN_GPS                 P1_3
-#define PIN_LIGHT               P1_6
+
 
 #define PIN_LED1                P1_2
 #define PIN_LED2                P1_3
 #define PIN_LED3                P1_4
 #define PIN_BUZZER              P2_5
-#define PIN_LM35_1              P6_1
-#define PIN_LM35_2              P6_2
+#define PIN_LM35_IN             P7_0
+#define PIN_LM35_OUT            P6_5
+#define PIN_BATTERY             P6_6
+#define PIN_LIGHT               P6_4
 
 
 
@@ -57,11 +60,13 @@ public:
     ADXL345 adxl;
     BMP085 bmp;
     
+    int             loopCounter;
     uint8_t         FSWstatus;
     uint8_t         eepromLockCheck ;
     float           insideTemperature;
     float           outsideTemperature;
     float           altitude;
+    float           batteryVoltage;
     unsigned long   timeofStart ;
     unsigned long   timeNow ;
     float           accX;
@@ -77,6 +82,9 @@ public:
     void            rtc_set_calibration();
     void            toggle(uint8_t,int);
     void            beginLEDS();
+    uint8_t         decideFSW();
+    void            sendTelemetry();
+    void            saveTelemetry();
 
 };
 

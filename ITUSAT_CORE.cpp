@@ -9,18 +9,14 @@
 #include "ITUSAT_CORE.h"
 
 
-
+// General functions
 void ITUSAT_CORE::startModules()
 {
     // Genel baslangic
+    loopCounter = 0;
     eepromLockCheck = eeprom.readLock();
     rtc.begin();
-    uint8_t u8Status = rtc.get();
-    
-    if (!u8Status)
-    {
-        timeofStart = rtc.time.hour*3600 + rtc.time.min*60 +  rtc.time.sec;
-    }
+    rtc.get();
     // Mission daha once baslamis mi kontrolu
     if (eepromLockCheck != MISSION_LOCK_EEPROM) {
         // FSW sifirla ilk baslangic saatini kaydet
@@ -40,16 +36,51 @@ void ITUSAT_CORE::startModules()
     
     //thermistor1.begin(THERMISTOR1_PIN);
     //thermistor2.begin(THERMISTOR2_PIN);
-    tempIN.begin(PIN_LM35_1);
-    tempOUT.begin(PIN_LM35_2);
+    tempIN.begin(PIN_LM35_IN);
+    tempOUT.begin(PIN_LM35_OUT);
     battery.begin(PIN_BATTERY);
     light.begin(PIN_LIGHT);
-    bmp.initialize();
+    //bmp.initialize();
+    bmp_ada.begin();
     adxl.initialize();
     buzzer.begin(PIN_BUZZER);
     warnReady();
 
 }
+
+uint8_t ITUSAT_CORE::decideFSW()
+{
+    
+
+    return 0;
+}
+
+void ITUSAT_CORE::sendTelemetry()
+{
+ 
+    xbee.addEnvelope(0);
+    xbee.addData(TEAM_NUMBER);
+    xbee.addData(timeNow);
+    xbee.addData(altitude);
+    xbee.addData(insideTemperature);
+    xbee.addData(outsideTemperature);
+    xbee.addData(batteryVoltage);
+    xbee.addData(FSWstatus);
+    xbee.addData(accX);
+    xbee.addData(accY);
+    xbee.addData(accZ);
+    xbee.addData(0); //crc
+    xbee.addEnvelope(1);
+    
+}
+
+void ITUSAT_CORE::saveTelemetry()
+{
+
+}
+
+
+// RTC functions
 
 unsigned long ITUSAT_CORE::rtc_millis()
 {
@@ -249,6 +280,9 @@ void ITUSAT_CORE::rtc_set_time()
 
 
 }
+
+
+// LEDS and Buzzer
 
 void ITUSAT_CORE::toggle(uint8_t pin , int mil)
 {
