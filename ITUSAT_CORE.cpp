@@ -18,11 +18,11 @@ void ITUSAT_CORE::startModules()
     rtc.begin();
     rtc.get();
     // Mission daha once baslamis mi kontrolu
-    if (eepromLockCheck != MISSION_LOCK_EEPROM) {
+    if (eepromLockCheck != MISSION_STARTED) {
         // FSW sifirla ilk baslangic saatini kaydet
         FSWstatus = 0;
         eeprom.writeFswState(FSWstatus);
-        eeprom.writeLock(MISSION_LOCK_EEPROM);
+        eeprom.writeLock(MISSION_STARTED);
         eeprom.writeHours(rtc.time.hour);
         eeprom.writeMinutes(rtc.time.min);
         eeprom.writeSeconds(rtc.time.sec);
@@ -48,28 +48,34 @@ void ITUSAT_CORE::startModules()
 
 }
 
-uint8_t ITUSAT_CORE::decideFSW()
+uint8_t ITUSAT_CORE::decideFSW(int loopCount)
 {
+//    if ((altitude/loopCount -baseAltitude) > 1.0)
+//    {
+//        servo.turn(0);
+//    }
     
-
-    return 0;
+    return 5;
 }
 
-void ITUSAT_CORE::sendTelemetry()
+void ITUSAT_CORE::sendTelemetry(int loopCount)
 {
  
     xbee.addEnvelope(0);
     xbee.addData(TEAM_NUMBER);
     xbee.addData(timeNow);
-    xbee.addData(altitude);
-    xbee.addData(insideTemperature);
-    xbee.addData(outsideTemperature);
-    xbee.addData(batteryVoltage);
+    xbee.addData(altitude/loopCount -baseAltitude);
+    xbee.addData(outsideTemperature/loopCount);
+    xbee.addData(insideTemperature/loopCount);
+    xbee.addData(batteryVoltage/loopCount);
     xbee.addData(FSWstatus);
-    xbee.addData(accX);
-    xbee.addData(accY);
-    xbee.addData(accZ);
-    xbee.addData(0); //crc
+    xbee.addData(accX/loopCount);
+    xbee.addData(accY/loopCount);
+    xbee.addData(accZ/loopCount);
+    xbee.addData(40.33);
+    xbee.addData(18.60);
+    xbee.addData(13.20);
+    xbee.addCRC(5); //crc
     xbee.addEnvelope(1);
     
 }
@@ -79,6 +85,69 @@ void ITUSAT_CORE::saveTelemetry()
 
 }
 
+
+void ITUSAT_CORE::seperateContainer()
+{
+    servo.turn(1);
+}
+
+void ITUSAT_CORE::clearSensorvalues()
+{
+
+    insideTemperature       = 0.0 ;
+    outsideTemperature      = 0.0 ;
+    altitude                = 0.0 ;
+    accX                    = 0.0 ;
+    accY                    = 0.0 ;
+    accZ                    = 0.0 ;
+    batteryVoltage          = 0.0 ;
+    
+}
+
+float ITUSAT_CORE::calibrateAltitude()
+{
+    float alt = 0.0;
+    for (int i = 0 ; i<10; i++) {
+        alt += bmp_ada.readAltitude();
+    }
+    
+    return alt/10;
+}
+
+void ITUSAT_CORE::readSettings()
+{
+    Serial.println("*********************");
+    Serial.print("Eeprom State : ");
+    if (eeprom.readData(MEM_EEPROM_STATE) == EEPROM_STATE_LOCK)
+    {
+        Serial.println("LOCKED");
+    }
+    else
+        Serial.println("UNLOCKED");
+    Serial.print("Mission State : ");
+    if (eeprom.readData(MEM_MISSION_STATE) == MISSION_STARTED)
+    {
+        Serial.println("STARTED");
+    }
+    else
+        Serial.println("STOPPED");
+    Serial.print("Flight Software State : ");
+    Serial.println(eeprom.readData(MEM_FSW_STATE));
+    Serial.print("Last Written Address : ");
+    eeprom.readAnything(MEM_LAST_ADDRESS, lastAddress);
+    Serial.println(lastAddress);
+    Serial.print("HOUR : ");
+    Serial.println(eeprom.readHours());
+    Serial.print("MINUTES : ");
+    Serial.println(eeprom.readMinutes());
+    Serial.print("SECONDS : ");
+    Serial.println(eeprom.readSeconds());
+    Serial.print("MISSION TIME : ");
+    eeprom.readAnything(MEM_MISSION_TIME, timeNow);
+    Serial.println(timeNow);
+    Serial.println("*********************");
+
+}
 
 // RTC functions
 

@@ -9,6 +9,15 @@
 #include "ITUSAT_EEPROM.h"
 #include "Wire.h"
 
+ITUSAT_EEPROM::ITUSAT_EEPROM()
+{
+    
+}
+
+void ITUSAT_EEPROM::begin()
+{
+    Wire.begin();
+}
 
 
 uint8_t ITUSAT_EEPROM::readFswState()
@@ -16,9 +25,9 @@ uint8_t ITUSAT_EEPROM::readFswState()
     return readData(MEM_FSW_STATE);
 }
 
-uint8_t ITUSAT_EEPROM::readActiveState()
+uint8_t ITUSAT_EEPROM::readEEPROMState()
 {
-    return readData(MEM_ACTIVE_STATE);
+    return readData(MEM_EEPROM_STATE);
 }
 
 uint8_t ITUSAT_EEPROM::readHours()
@@ -37,10 +46,7 @@ uint8_t ITUSAT_EEPROM::readSeconds()
     return readData(MEM_TIME_SECONDS);
 }
 
-uint8_t ITUSAT_EEPROM::readLock()
-{
-    return readData(MEM_EEPROM_LOCK);
-}
+
 
 float ITUSAT_EEPROM::readFloat(int address)
 
@@ -60,9 +66,9 @@ void  ITUSAT_EEPROM::writeFswState(uint8_t data)
     writeData(MEM_FSW_STATE, data);
 }
 
-void  ITUSAT_EEPROM::writeActiveState(uint8_t data)
+void  ITUSAT_EEPROM::writeEEPROMState(uint8_t data)
 {
-    writeData(MEM_ACTIVE_STATE, data);
+    writeData(MEM_EEPROM_STATE, data);
 }
 
 void  ITUSAT_EEPROM::writeHours(uint8_t data)
@@ -80,47 +86,16 @@ void  ITUSAT_EEPROM::writeSeconds(uint8_t data)
     writeData(MEM_TIME_SECONDS, data);
 }
 
-void  ITUSAT_EEPROM::writeLock(uint8_t data)
-{
-    writeData(MEM_EEPROM_LOCK, data);
-}
+void    ITUSAT_EEPROM::writeMissionState(uint8_t data)
 
-void  ITUSAT_EEPROM::writeFloat(int address,float data)
 {
-   
-    union {
-        float float_variable;
-        char bytes_array[SIZE_FLOAT];
-    } my_union;
-    
-    my_union.float_variable = data ;
-    memcpy(temp, my_union.bytes_array, 4);
-    char counter = 0 ;
-    for (counter = 0; counter <SIZE_FLOAT; counter++) {
-        writeData(address++, temp[counter]);
-    }
-    
+    writeData(MEM_MISSION_STATE, data);
 }
 
 
 
 
 
-
-
-
-
-
-uint8_t ITUSAT_EEPROM::testEEPROM()
-{
-    writeData(MEM_TEST_EEPROM, 5);
-    uint8_t check =  readData(MEM_TEST_EEPROM);
-    if (check = 5 ) {
-        return 1;
-    }
-    else
-        return 0;
-}
 
 
 

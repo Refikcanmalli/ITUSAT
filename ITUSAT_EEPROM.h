@@ -12,19 +12,25 @@
 #include "Energia.h"
 #include <inttypes.h>
 #define EEPROM_ADDRESS           0x50
+#define EEPROM_SIZE              1024000
 
 
-#define MEM_ACTIVE_STATE         0x00
-#define MEM_EEPROM_LOCK          0x01
-#define MEM_FSW_STATE            0x02
-#define MEM_LAST_ADDRESS         0x03
-#define MEM_TIME_HOURS           0x04
-#define MEM_TIME_MINUTES         0x05
-#define MEM_TIME_SECONDS         0x06
-#define MEM_TEST_EEPROM          0x07
+#define MEM_EEPROM_STATE         0x00
+#define MEM_MISSION_STATE        1
+#define MEM_FSW_STATE            2
+#define MEM_TIME_HOURS           3
+#define MEM_TIME_MINUTES         4
+#define MEM_TIME_SECONDS         5
+#define MEM_LAST_ADDRESS         6
+#define MEM_MISSION_TIME         10
 
-#define MISSION_LOCK_EEPROM      0xFF
-#define MISSION_UNLOCK_EEPROM    0x11
+#define MEM_SETTINGS_END         14
+
+
+#define MISSION_FINISHED         0xFF
+#define MISSION_STARTED          0x11
+#define EEPROM_STATE_LOCK        0xFF
+#define EEPROM_STATE_UNLOCK      0x11
 
 #define SIZE_FLOAT               4
 #define SIZE_INT                 2
@@ -35,41 +41,56 @@
 class ITUSAT_EEPROM
 {
 public:
+    ITUSAT_EEPROM();
     byte temp[SIZE_FLOAT];
+    void begin();
     
     uint8_t readFswState();
-    uint8_t readActiveState();
+    uint8_t readEEPROMState();
     uint8_t readHours();
     uint8_t readMinutes();
     uint8_t readSeconds();
     uint8_t readLock();
+    uint8_t readMissionState();
     
     void    writeFswState(uint8_t);
-    void    writeActiveState(uint8_t);
+    void    writeEEPROMState(uint8_t);
     void    writeHours(uint8_t);
     void    writeMinutes(uint8_t);
     void    writeSeconds(uint8_t);
     void    writeLock(uint8_t);
+    void    writeMissionState(uint8_t);
     
     
     uint8_t testEEPROM();
     uint8_t readData(int);
-    void writeData(int, uint8_t);
+    void    writeData(int, uint8_t);
+    
+
     
     //EXP
-    float   readFloat(int);
-    long    readLong(int);
-    int     readInt(int);
-    char    readChar(int);
     
-    void    writeLong(int,long);
-    void    writeInt(int,int);
-    void    writeChar(int,char);
-    void    writeFloat(int,float);
+    template <class T> int writeAnything(int ee, const T& value)
+    {
+        const byte* p = (const byte*)(const void*)&value;
+        unsigned int i;
+        for (i = 0; i < sizeof(value); i++)
+            writeData(ee++, *p++);
+        return i;
+    }
+    
+    template <class T> int readAnything(int ee, T& value)
+    {
+        byte* p = (byte*)(void*)&value;
+        unsigned int i;
+        for (i = 0; i < sizeof(value); i++)
+            *p++ = readData(ee++);
+        return i;
+    }
     
 };
 
-extern ITUSAT_EEPROM EEPROM;
+//extern ITUSAT_EEPROM EEPROM;
 
 
 #endif /* defined(__ITUSAT_ENERGIA__ITUSAT_EEPROM__) */

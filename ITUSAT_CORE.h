@@ -10,6 +10,7 @@
 #define __ITUSAT_ENERGIA__ITUSAT_CORE__
 
 #include "Energia.h"
+#include "Servo.h"
 #include "ITUSAT_EEPROM.h"
 #include "ITUSAT_RTC.h"
 #include "ITUSAT_NTC.h"
@@ -24,6 +25,7 @@
 #include "I2Cdev.h"
 #include "ITUSAT_GPS.h"
 #include "ITUSAT_BUZZER.h"
+#include "ITUSAT_SERVO.h"
 
 #define TEAM_NUMBER             3806
 
@@ -40,6 +42,8 @@
 #define PIN_LM35_OUT            P6_5
 #define PIN_BATTERY             P6_6
 #define PIN_LIGHT               P6_4
+#define PIN_SERVO               39
+#define PIN_CAMERALED           P1_5
 
 
 
@@ -56,6 +60,7 @@ public:
     ITUSAT_BATTERY battery;
     ITUSAT_XBEE xbee;
     ITUSAT_BUZZER buzzer;
+    ITUSAT_SERVO  servo;
     Adafruit_BMP085 bmp_ada;
     ADXL345 adxl;
     BMP085 bmp;
@@ -72,19 +77,28 @@ public:
     float           accX;
     float           accY;
     float           accZ;
+    float           baseAltitude;
+    unsigned long   lastAddress;
     
     void            startModules();
     void            warnReady();
     uint8_t         calculateCRC();
+    
     unsigned long   rtc_millis();
     void            rtc_set_time();
     void            rtc_print_time(char *);
     void            rtc_set_calibration();
+    
     void            toggle(uint8_t,int);
     void            beginLEDS();
-    uint8_t         decideFSW();
-    void            sendTelemetry();
+    uint8_t         decideFSW(int);
+    void            sendTelemetry(int);
     void            saveTelemetry();
+    void            seperateContainer();
+    void            clearSensorvalues();
+    float           calibrateAltitude();
+    void            readSettings();
+    
 
 };
 

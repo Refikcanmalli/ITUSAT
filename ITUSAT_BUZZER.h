@@ -19,9 +19,9 @@ public:
     uint8_t buzzerPin;
     ITUSAT_BUZZER();
     void begin(uint8_t);
-    void play();
-    void playImperial();
-    void beep(int, int);
+  //  void play();
+  //  void playImperial();
+    //void beep(int, int);
 };
 
 #define cc 261
