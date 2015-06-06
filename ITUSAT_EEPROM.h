@@ -23,12 +23,18 @@
 #define MEM_TIME_SECONDS         5
 #define MEM_LAST_ADDRESS         6
 #define MEM_MISSION_TIME         10
+#define MEM_BASE_ALTITUDE        14
 
-#define MEM_SETTINGS_END         14
+
+#define MEM_SETTINGS_END         18
+
+#define MEM_TELEMETRY_START      20
 
 
 #define MISSION_FINISHED         0xFF
 #define MISSION_STARTED          0x11
+#define MISSION_READY            0xCC
+#define MISSION_ERASE            0xAA
 #define EEPROM_STATE_LOCK        0xFF
 #define EEPROM_STATE_UNLOCK      0x11
 
@@ -50,16 +56,17 @@ public:
     uint8_t readHours();
     uint8_t readMinutes();
     uint8_t readSeconds();
-    uint8_t readLock();
     uint8_t readMissionState();
+    
     
     void    writeFswState(uint8_t);
     void    writeEEPROMState(uint8_t);
     void    writeHours(uint8_t);
     void    writeMinutes(uint8_t);
     void    writeSeconds(uint8_t);
-    void    writeLock(uint8_t);
     void    writeMissionState(uint8_t);
+
+    
     
     
     uint8_t testEEPROM();

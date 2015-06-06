@@ -46,18 +46,11 @@ uint8_t ITUSAT_EEPROM::readSeconds()
     return readData(MEM_TIME_SECONDS);
 }
 
-
-
-float ITUSAT_EEPROM::readFloat(int address)
-
+uint8_t ITUSAT_EEPROM::readMissionState()
 {
-    float temp_f;
-    for (char i = 0; i<SIZE_FLOAT; i++) {
-        temp[i] = readData(address++);
-    }
-    temp_f = (temp[0] << 24) + (temp[1] << 16) + (temp[2] << 8) + temp[3];
-    return temp_f;
+    return readData(MEM_MISSION_STATE);
 }
+
 
 
 
@@ -87,15 +80,21 @@ void  ITUSAT_EEPROM::writeSeconds(uint8_t data)
 }
 
 void    ITUSAT_EEPROM::writeMissionState(uint8_t data)
-
 {
     writeData(MEM_MISSION_STATE, data);
+    // ALIHAN <3 IRMAK
 }
 
+/////////////////////////////////////////////////////
 
 
 
 
+
+
+
+
+/////////////////////////////////////////////////////
 
 
 

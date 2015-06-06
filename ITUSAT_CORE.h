@@ -51,6 +51,21 @@ class ITUSAT_CORE
 {
 public:
     
+    struct Telemetry{
+        char            startByte;
+        unsigned long   time;
+        float           altitude;
+        float           insideTemperature;
+        float           outsideTemperature;
+        float           batteryVoltage;
+        uint8_t         FSWstatus;
+        float           accX;
+        float           accY;
+        float           accZ;
+        char            stopByte;
+    
+    } telemetryValues;
+    
     ITUSAT_RTC rtc;
     ITUSAT_EEPROM eeprom;
     ITUSAT_CAMERA camera;
@@ -67,18 +82,13 @@ public:
     
     int             loopCounter;
     uint8_t         FSWstatus;
-    uint8_t         eepromLockCheck ;
-    float           insideTemperature;
-    float           outsideTemperature;
-    float           altitude;
-    float           batteryVoltage;
+    uint8_t         missionStatusCheck ;
+    uint8_t         eepromStatusCheck ;
     unsigned long   timeofStart ;
     unsigned long   timeNow ;
-    float           accX;
-    float           accY;
-    float           accZ;
     float           baseAltitude;
     unsigned long   lastAddress;
+    unsigned long   previousTime;
     
     void            startModules();
     void            warnReady();
@@ -91,13 +101,14 @@ public:
     
     void            toggle(uint8_t,int);
     void            beginLEDS();
-    uint8_t         decideFSW(int);
-    void            sendTelemetry(int);
+    uint8_t         decideFSW();
+    void            sendTelemetry();
     void            saveTelemetry();
     void            seperateContainer();
     void            clearSensorvalues();
     float           calibrateAltitude();
     void            readSettings();
+    void            calibrateSensorValues();
     
 
 };
