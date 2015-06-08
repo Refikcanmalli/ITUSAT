@@ -20,11 +20,6 @@ void ITUSAT_EEPROM::begin()
 }
 
 
-uint8_t ITUSAT_EEPROM::readFswState()
-{
-    return readData(MEM_FSW_STATE);
-}
-
 uint8_t ITUSAT_EEPROM::readEEPROMState()
 {
     return readData(MEM_EEPROM_STATE);
@@ -50,14 +45,19 @@ uint8_t ITUSAT_EEPROM::readMissionState()
 {
     return readData(MEM_MISSION_STATE);
 }
-
-
-
-
-void  ITUSAT_EEPROM::writeFswState(uint8_t data)
+uint8_t ITUSAT_EEPROM::readCurrentFswState()
 {
-    writeData(MEM_FSW_STATE, data);
+    return readData(MEM_CURRENT_FSW);
 }
+
+uint8_t ITUSAT_EEPROM::readPreviousFswState()
+{
+    return readData(MEM_PREVIOUS_FSW);
+}
+
+
+
+
 
 void  ITUSAT_EEPROM::writeEEPROMState(uint8_t data)
 {
@@ -83,6 +83,16 @@ void    ITUSAT_EEPROM::writeMissionState(uint8_t data)
 {
     writeData(MEM_MISSION_STATE, data);
     // ALIHAN <3 IRMAK
+}
+
+void ITUSAT_EEPROM::writeCurrentFswState(uint8_t data)
+{
+    writeData(MEM_CURRENT_FSW, data);
+}
+
+void ITUSAT_EEPROM::writePreviousFswState(uint8_t data)
+{
+     writeData(MEM_PREVIOUS_FSW, data);
 }
 
 /////////////////////////////////////////////////////

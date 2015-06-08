@@ -21,33 +21,13 @@ void ITUSAT_LIGHT::begin(uint8_t pin)
     
 }
 
-uint8_t ITUSAT_LIGHT::readLight()
+int ITUSAT_LIGHT::readLight()
 {
-#ifdef RESISTOR_10K
-
     rawLight =  analogRead(selectedPin);    // read the input pin
-    realLight = (LIGHT_REFERENCEBIRIM) * rawLight ;
-    if (realLight>=LIGHT_TRESHOLD)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-#elif RESISTOR_100K
-    rawLight =  analogRead(selectedPin);    // read the input pin
-    realLight = (LIGHT_REFERENCEBIRIM) * rawLight ;
-    if (realLight>=LIGHT_TRESHOLD)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-
-#endif
+    //realLight = (LIGHT_REFERENCEBIRIM) * rawLight ;
+    realLight = rawLight;
+    return realLight;
+    
 
     
 }

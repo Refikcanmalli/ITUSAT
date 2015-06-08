@@ -43,7 +43,23 @@
 #define PIN_BATTERY             P6_6
 #define PIN_LIGHT               P6_4
 #define PIN_SERVO               39
-#define PIN_CAMERALED           P1_5
+#define PIN_CAMERA_OPEN         P2_6
+#define PIN_CAMERA_CONTROL      P2_7
+#define PIN_CAMERA_LED          P1_5
+
+
+
+// FSW DECIDERS
+#define FSW_SEPERATION_METERS       500.0
+#define FSW_SEPERATION_METERS_MAX   FSW_SEPERATION_METERS + 5
+#define FSW_SEPERATION_METERS_MIN   FSW_SEPERATION_METERS - 15
+#define FSW_LIGHT_THRESHOLD         100
+#define FSW_LAND_DECIDE_SECS        10
+#define FSW_LAND_DECIDE_METERS      5
+#define FSW_PREFLIGHT_ALTITUDE      5
+#define FSW_LAUNCHWAIT_ALTITUDE     10
+#define FSW_MIN_DEPLOYMENT_ALT      500.0
+
 
 
 
@@ -51,6 +67,62 @@ class ITUSAT_CORE
 {
 public:
     
+
+    // helper variables
+    int             loopCounter;
+    uint8_t         FSWstatus;
+    uint8_t         previousFSWStatus;
+    uint8_t         missionStatusCheck ;
+    uint8_t         eepromStatusCheck ;
+    unsigned long   timeofStart ;
+    unsigned long   timeNow ;
+    float           baseAltitude;
+    unsigned long   lastAddress;
+    unsigned long   previousTime;
+    int             lightValue;
+    
+    // setup
+    void            beginLEDS();
+    void            beginModules();
+    void            beginSerials();
+    void            prepareMission();
+    float           calibrateAltitude();
+    void            warnReady();
+    void            clearSensorvalues();
+    void            calibrateSensorValues();
+    void            toggle(uint8_t,int);
+
+    // RTC wrapper functions
+    unsigned long   rtc_millis();
+    void            rtc_set_time(const char *year ,const char *month ,const char *day ,
+                                 const char *hours, const char *mins,const char *secs);
+    void            rtc_print_time();
+    void            rtc_set_calibration();
+    
+
+    //telemetry
+
+    void            sendTelemetry();
+    void            saveTelemetry();
+    uint8_t         calculateCRC();
+    
+    // FSW
+    bool            controlPreFlightTest(float,int);
+    bool            controlLaunchWait(float,int);
+    bool            controlAscent(float,int);
+    bool            controlRocketDeployment(float,int);
+    bool            controlStabilization(float,int);
+    bool            controlSeparation(float,int);
+    bool            controlDescent(float,int);
+    bool            controlLanded(float,int);
+    uint8_t         decideFSW();
+    void            seperateContainer();
+    void            land();
+    
+    //others
+    void            readSettings();
+    
+    // Telemetry structure
     struct Telemetry{
         char            startByte;
         unsigned long   time;
@@ -63,8 +135,10 @@ public:
         float           accY;
         float           accZ;
         char            stopByte;
-    
+        
     } telemetryValues;
+    
+    // Modules
     
     ITUSAT_RTC rtc;
     ITUSAT_EEPROM eeprom;
@@ -79,36 +153,6 @@ public:
     Adafruit_BMP085 bmp_ada;
     ADXL345 adxl;
     BMP085 bmp;
-    
-    int             loopCounter;
-    uint8_t         FSWstatus;
-    uint8_t         missionStatusCheck ;
-    uint8_t         eepromStatusCheck ;
-    unsigned long   timeofStart ;
-    unsigned long   timeNow ;
-    float           baseAltitude;
-    unsigned long   lastAddress;
-    unsigned long   previousTime;
-    
-    void            startModules();
-    void            warnReady();
-    uint8_t         calculateCRC();
-    
-    unsigned long   rtc_millis();
-    void            rtc_set_time();
-    void            rtc_print_time(char *);
-    void            rtc_set_calibration();
-    
-    void            toggle(uint8_t,int);
-    void            beginLEDS();
-    uint8_t         decideFSW();
-    void            sendTelemetry();
-    void            saveTelemetry();
-    void            seperateContainer();
-    void            clearSensorvalues();
-    float           calibrateAltitude();
-    void            readSettings();
-    void            calibrateSensorValues();
     
 
 };

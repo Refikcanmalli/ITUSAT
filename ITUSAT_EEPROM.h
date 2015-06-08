@@ -17,18 +17,24 @@
 
 #define MEM_EEPROM_STATE         0x00
 #define MEM_MISSION_STATE        1
-#define MEM_FSW_STATE            2
+#define MEM_PREVIOUS_FSW         2
 #define MEM_TIME_HOURS           3
 #define MEM_TIME_MINUTES         4
 #define MEM_TIME_SECONDS         5
-#define MEM_LAST_ADDRESS         6
-#define MEM_MISSION_TIME         10
-#define MEM_BASE_ALTITUDE        14
+#define MEM_CURRENT_FSW          6
+#define MEM_LAST_ADDRESS         10
+#define MEM_MISSION_TIME         14
+#define MEM_BASE_ALTITUDE        18
 
 
-#define MEM_SETTINGS_END         18
+#define MEM_FSW_ROCKET_DEPLOY    25
+#define MEM_FSW_SEPERATION       26
+#define MEM_FSW_LANDED           27
 
-#define MEM_TELEMETRY_START      20
+#define MEM_DEPLOYED_TELEMETRY   30
+#define MEM_SEPERATED_TELEMETRY  100
+
+#define MEM_TELEMETRY_START      150
 
 
 #define MISSION_FINISHED         0xFF
@@ -51,7 +57,8 @@ public:
     byte temp[SIZE_FLOAT];
     void begin();
     
-    uint8_t readFswState();
+    uint8_t readPreviousFswState();
+    uint8_t readCurrentFswState();
     uint8_t readEEPROMState();
     uint8_t readHours();
     uint8_t readMinutes();
@@ -59,7 +66,8 @@ public:
     uint8_t readMissionState();
     
     
-    void    writeFswState(uint8_t);
+    void    writePreviousFswState(uint8_t);
+    void    writeCurrentFswState(uint8_t);
     void    writeEEPROMState(uint8_t);
     void    writeHours(uint8_t);
     void    writeMinutes(uint8_t);
