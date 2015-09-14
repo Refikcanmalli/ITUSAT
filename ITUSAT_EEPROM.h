@@ -22,16 +22,20 @@
 #define MEM_TIME_MINUTES         4
 #define MEM_TIME_SECONDS         5
 #define MEM_CURRENT_FSW          6
+#define MEM_CAMERA_STATUS        7
+#define MEM_POWER_STATUS         8
 #define MEM_LAST_ADDRESS         10
 #define MEM_MISSION_TIME         14
 #define MEM_BASE_ALTITUDE        18
+#define MEM_CAMERA_OPEN_SECS     22
 
 
-#define MEM_FSW_ROCKET_DEPLOY    25
-#define MEM_FSW_SEPERATION       26
-#define MEM_FSW_LANDED           27
+#define MEM_FSW_ROCKET_DEPLOY    30
+#define MEM_FSW_SEPERATION       31
+#define MEM_FSW_LANDED           32
+#define MEM_FSW_LAND_COUNTER     33
 
-#define MEM_DEPLOYED_TELEMETRY   30
+#define MEM_DEPLOYED_TELEMETRY   50
 #define MEM_SEPERATED_TELEMETRY  100
 
 #define MEM_TELEMETRY_START      150

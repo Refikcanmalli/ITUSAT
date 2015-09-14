@@ -23,9 +23,10 @@
 #include "ITUSAT_BATTERY.h"
 #include "ITUSAT_LM35.h"
 #include "I2Cdev.h"
-#include "ITUSAT_GPS.h"
 #include "ITUSAT_BUZZER.h"
 #include "ITUSAT_SERVO.h"
+#include "TinyGPS.h"
+
 
 #define TEAM_NUMBER             3806
 
@@ -49,16 +50,26 @@
 
 
 
+//// FSW DECIDERS
+//#define FSW_SEPERATION_METERS       500
+//#define FSW_SEPERATION_METERS_MAX   FSW_SEPERATION_METERS + 5
+//#define FSW_SEPERATION_METERS_MIN   FSW_SEPERATION_METERS - 10
+//#define FSW_LIGHT_THRESHOLD         100
+//#define FSW_LAND_DECIDE_SECS        10
+//#define FSW_LAND_DECIDE_METERS      10
+//#define FSW_PREFLIGHT_ALTITUDE      3
+//#define FSW_LAUNCHWAIT_ALTITUDE     7
+//#define FSW_MIN_DEPLOYMENT_ALT      5
+
 // FSW DECIDERS
-#define FSW_SEPERATION_METERS       500.0
+#define FSW_SEPERATION_METERS       500
 #define FSW_SEPERATION_METERS_MAX   FSW_SEPERATION_METERS + 5
-#define FSW_SEPERATION_METERS_MIN   FSW_SEPERATION_METERS - 15
-#define FSW_LIGHT_THRESHOLD         100
+#define FSW_SEPERATION_METERS_MIN   FSW_SEPERATION_METERS - 10
+#define FSW_LIGHT_THRESHOLD         2500
 #define FSW_LAND_DECIDE_SECS        10
-#define FSW_LAND_DECIDE_METERS      5
-#define FSW_PREFLIGHT_ALTITUDE      5
-#define FSW_LAUNCHWAIT_ALTITUDE     10
-#define FSW_MIN_DEPLOYMENT_ALT      500.0
+#define FSW_LAND_DECIDE_METERS      10
+#define FSW_LAUNCHWAIT_ALTITUDE     5
+#define FSW_MIN_DEPLOYMENT_ALT      500
 
 
 
@@ -79,18 +90,24 @@ public:
     float           baseAltitude;
     unsigned long   lastAddress;
     unsigned long   previousTime;
-    int             lightValue;
+    unsigned int    lightValue;
+    bool            newData;
+    unsigned long   age;
+    unsigned long   missionTime;
+    
+    
     
     // setup
     void            beginLEDS();
     void            beginModules();
     void            beginSerials();
-    void            prepareMission();
+    void            prepareMission(uint8_t);
     float           calibrateAltitude();
     void            warnReady();
     void            clearSensorvalues();
     void            calibrateSensorValues();
     void            toggle(uint8_t,int);
+    
 
     // RTC wrapper functions
     unsigned long   rtc_millis();
@@ -104,17 +121,18 @@ public:
 
     void            sendTelemetry();
     void            saveTelemetry();
+    void            readGPS();
     uint8_t         calculateCRC();
     
     // FSW
-    bool            controlPreFlightTest(float,int);
-    bool            controlLaunchWait(float,int);
-    bool            controlAscent(float,int);
-    bool            controlRocketDeployment(float,int);
-    bool            controlStabilization(float,int);
-    bool            controlSeparation(float,int);
-    bool            controlDescent(float,int);
-    bool            controlLanded(float,int);
+//    bool            controlPreFlightTest(float,unsigned int,int);
+    uint8_t         decideLaunchWait(float,unsigned int,uint8_t);
+    uint8_t         decideAscent(float,unsigned int,uint8_t);
+    uint8_t         decideRocketDeployment(float,unsigned int,uint8_t);
+    uint8_t         decideStabilization(float,unsigned int,uint8_t);
+    uint8_t         decideSeparation(float,unsigned int,uint8_t);
+    uint8_t         decideDescent(float,unsigned int,uint8_t);
+    uint8_t         decideLanded(float,unsigned int,uint8_t);
     uint8_t         decideFSW();
     void            seperateContainer();
     void            land();
@@ -134,6 +152,9 @@ public:
         float           accX;
         float           accY;
         float           accZ;
+        float           GPSlat;
+        float           GPSlongt;
+        float           GPSaltitude;
         char            stopByte;
         
     } telemetryValues;
@@ -151,6 +172,7 @@ public:
     ITUSAT_BUZZER buzzer;
     ITUSAT_SERVO  servo;
     Adafruit_BMP085 bmp_ada;
+    TinyGPS gps;
     ADXL345 adxl;
     BMP085 bmp;
     

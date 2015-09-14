@@ -23,6 +23,7 @@ public:
     
     void begin();
     void addEnvelope(uint8_t);
+    void addGPSData(float);
     void addData(int);
     void addData(float);
     void addData(double);

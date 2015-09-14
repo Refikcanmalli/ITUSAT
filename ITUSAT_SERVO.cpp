@@ -18,8 +18,9 @@ ITUSAT_SERVO::ITUSAT_SERVO()
 void ITUSAT_SERVO::begin(uint8_t pin)
 {
     
-    myservo.attach(pin);
-    digitalWrite(pin, LOW);
+   // myservo.attach(pin);
+   // myservo.write(20);
+    //digitalWrite(pin, LOW);
     
 }
 

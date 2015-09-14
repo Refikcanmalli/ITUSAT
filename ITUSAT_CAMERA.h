@@ -22,12 +22,16 @@ class ITUSAT_CAMERA {
     
     
     void prepare(int p_open,int p_cont,int p_sta);
+    void checkCamera();
     void open(int time);
     void close(int time);
     void startRecord(int time);
     void stopRecord(int time);
     void takePhoto();
-
+    
+    
+    void open_wtimer(unsigned long);
+    void record_wtimer(unsigned long);
 
 };
 

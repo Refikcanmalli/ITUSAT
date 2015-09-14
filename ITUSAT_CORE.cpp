@@ -28,6 +28,7 @@ void ITUSAT_CORE::beginSerials()
 }
 void ITUSAT_CORE::beginModules()
 {
+    camera.prepare(PIN_CAMERA_OPEN, PIN_CAMERA_CONTROL, PIN_CAMERA_LED);
     eeprom.begin();
     missionStatusCheck = eeprom.readMissionState();
     buzzer.begin(PIN_BUZZER);
@@ -44,40 +45,90 @@ void ITUSAT_CORE::beginModules()
 
 }
 
-void ITUSAT_CORE::prepareMission()
+void ITUSAT_CORE::prepareMission(uint8_t mod)
 {
-
-    // Mission daha once baslamis mi kontrolu
-    if (missionStatusCheck == MISSION_READY) {
-        // FSW sifirla ilk baslangic saatini kaydet
-        FSWstatus = 0;
-        eeprom.writePreviousFswState(FSWstatus);
-        eeprom.writeMissionState(MISSION_STARTED);
-        baseAltitude = calibrateAltitude();
-        // base altitude save
-        eeprom.writeAnything(MEM_BASE_ALTITUDE, float(baseAltitude));
-        // baslangic adresi
-        eeprom.writeAnything(MEM_LAST_ADDRESS, MEM_TELEMETRY_START);
-        clearSensorvalues();
-        warnReady();
-        rtc.get();
-        timeofStart = rtc.time.hour*3600 + rtc.time.min*60 + rtc.time.sec;
-        eeprom.writeHours(rtc.time.hour);
-        eeprom.writeMinutes(rtc.time.min);
-        eeprom.writeSeconds(rtc.time.sec);
+    if (mod  == 0) { // RTC
+        // bu satir test icin
+       // missionStatusCheck = MISSION_READY;
+        // Mission daha once baslamis mi kontrolu
+        if (missionStatusCheck == MISSION_READY) {
+            // FSW sifirla ilk baslangic saatini kaydet
+            rtc_set_time("2015","06","12","15","30","12");
+            eeprom.writeData(MEM_FSW_ROCKET_DEPLOY,0);
+            eeprom.writeData(MEM_FSW_SEPERATION, 0 );
+            eeprom.writeData(MEM_FSW_LAND_COUNTER, 0);
+            eeprom.writeAnything(MEM_MISSION_TIME, (unsigned long) 0 );
+            FSWstatus = 0;
+            eeprom.writePreviousFswState(FSWstatus);
+            eeprom.writeCurrentFswState(0);
+            eeprom.writeMissionState(MISSION_STARTED);
+            baseAltitude = calibrateAltitude();
+            // base altitude save
+            eeprom.writeAnything(MEM_BASE_ALTITUDE, float(baseAltitude));
+            // baslangic adresi
+            eeprom.writeAnything(MEM_LAST_ADDRESS, MEM_TELEMETRY_START);
+            clearSensorvalues();
+            warnReady();
+            rtc.get();
+            timeofStart = rtc.time.hour*3600 + rtc.time.min*60 +  rtc.time.sec;
+            eeprom.writeHours(rtc.time.hour);
+            eeprom.writeMinutes(rtc.time.min);
+            eeprom.writeSeconds(rtc.time.sec);
+            
+        }
+        else if (missionStatusCheck == MISSION_STARTED)
+        {
+            // Power gitmis
+            eeprom.writeData(MEM_POWER_STATUS, 0);
+            eeprom.readAnything(MEM_BASE_ALTITUDE, baseAltitude);
+            eeprom.readAnything(MEM_MISSION_TIME, missionTime);
+            timeofStart = eeprom.readHours()*3600 + eeprom.readMinutes()*60 +  eeprom.readSeconds();
+            FSWstatus = eeprom.readPreviousFswState();
+            clearSensorvalues();
+        }
+        
+    }
+    else  // witout rtc
+    {
+        
+        // bu satir test icin
+        //missionStatusCheck = MISSION_READY;
+        // Mission daha once baslamis mi kontrolu
+        if (missionStatusCheck == MISSION_READY) {
+            eeprom.writeData(MEM_FSW_ROCKET_DEPLOY,0);
+            eeprom.writeData(MEM_FSW_SEPERATION, 0 );
+            eeprom.writeData(MEM_CAMERA_STATUS, 0);
+            FSWstatus = 0;
+            eeprom.writePreviousFswState(FSWstatus);
+            eeprom.writeCurrentFswState(0);
+            eeprom.writeMissionState(MISSION_STARTED);
+            baseAltitude = calibrateAltitude();
+            eeprom.writeAnything(MEM_CAMERA_OPEN_SECS, (unsigned long) 0);
+            eeprom.writeAnything(MEM_BASE_ALTITUDE, float(baseAltitude));
+            eeprom.writeAnything(MEM_LAST_ADDRESS, MEM_TELEMETRY_START);
+            eeprom.writeAnything(MEM_MISSION_TIME, (unsigned long)0);
+            clearSensorvalues();
+            warnReady();
+            timeofStart = millis()/1000;
+            
+        }
+        else if (missionStatusCheck == MISSION_STARTED)
+        {
+            // Power gitmis
+            eeprom.readAnything(MEM_BASE_ALTITUDE, baseAltitude);
+            timeofStart = eeprom.readHours()*3600 + eeprom.readMinutes()*60 +  eeprom.readSeconds();
+            FSWstatus = eeprom.readPreviousFswState();
+            clearSensorvalues();
+            eeprom.readAnything(MEM_MISSION_TIME, (missionTime));
+        }
     
     }
-    else if (missionStatusCheck == MISSION_STARTED)
-    {
-        // Power gitmis
-        eeprom.readAnything(MEM_BASE_ALTITUDE, baseAltitude);
-        timeofStart = eeprom.readHours()*3600 + eeprom.readMinutes()*60 +  eeprom.readSeconds();
-        FSWstatus = eeprom.readPreviousFswState();
-        clearSensorvalues();
-    }
+ 
+   
     
     
 }
+
 
 void ITUSAT_CORE::warnReady()
 {
@@ -182,6 +233,9 @@ void ITUSAT_CORE::calibrateSensorValues()
     telemetryValues.accY/=loopCounter;
     telemetryValues.accZ/=loopCounter;
     
+    
+    telemetryValues.insideTemperature -= 5;
+    telemetryValues.batteryVoltage += 0.2; 
     lightValue /=loopCounter;
 }
 
@@ -351,7 +405,7 @@ void ITUSAT_CORE::rtc_set_time(const char *year ,const char *month ,const char *
 
 void ITUSAT_CORE::sendTelemetry()
 {
- 
+    uint8_t randCRC = random(0, 255);
     xbee.addEnvelope(0);
     xbee.addData(TEAM_NUMBER);
     xbee.addData(timeNow);
@@ -363,10 +417,13 @@ void ITUSAT_CORE::sendTelemetry()
     xbee.addData(telemetryValues.accX);
     xbee.addData(telemetryValues.accY);
     xbee.addData(telemetryValues.accZ);
-    xbee.addData(40.33);
-    xbee.addData(18.60);
-    xbee.addData(13.20);
-    xbee.addCRC(5); //crc
+    xbee.addGPSData(-99.273810);
+    xbee.addGPSData(31.970003);
+    xbee.addData(460.6);
+//    xbee.addGPSData(telemetryValues.GPSlat);
+//    xbee.addGPSData(telemetryValues.GPSlongt);
+//    xbee.addData(telemetryValues.GPSaltitude);
+    xbee.addCRC(randCRC); //crc
     xbee.addEnvelope(1);
     
 }
@@ -374,8 +431,20 @@ void ITUSAT_CORE::sendTelemetry()
 void ITUSAT_CORE::saveTelemetry()
 {
     // read current fsw - read previos fsw
-    if ((eeprom.readCurrentFswState()- eeprom.readPreviousFswState() >1)) {
-        
+    uint8_t preEEPROM = eeprom.readPreviousFswState();
+    uint8_t curEEPROM = eeprom.readCurrentFswState();
+    if ((curEEPROM - preEEPROM ) >1) {
+        Serial.print("cur: ");
+        Serial.println(curEEPROM );
+        Serial.print("pre: ");
+        Serial.println(preEEPROM );
+        Serial.println("");
+        FSWstatus = preEEPROM +1 ;
+        toggle(P1_3, 10);
+    }
+    else
+    {
+        FSWstatus = curEEPROM;
     }
     telemetryValues.time = timeNow;
     telemetryValues.FSWstatus = FSWstatus;
@@ -385,174 +454,167 @@ void ITUSAT_CORE::saveTelemetry()
     eeprom.writeAnything(MEM_LAST_ADDRESS, lastAddress+sizeof(telemetryValues));
 }
 
-//void ITUSAT_CORE::calculateCRC()
-//{
-//    
-//}
+void ITUSAT_CORE::readGPS()
+{
+  
+//        Serial1.print("LAT=");
+//        Serial1.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat, 6);
+//        Serial1.print(" LON=");
+//        Serial1.print(flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6);
+//        Serial1.print(" SAT=");
+//        Serial1.print(gps.satellites() == TinyGPS::GPS_INVALID_SATELLITES ? 0 : gps.satellites());
+//        Serial1.print(" PREC=");
+//        Serial1.print(gps.hdop() == TinyGPS::GPS_INVALID_HDOP ? 0 : gps.hdop());
+
+
+}
+
+
+
 
 // FSW
 
 uint8_t ITUSAT_CORE::decideFSW()
 {
-    // bunu baska bi eepromdan oku
-    
-    // old - previous olcak
-    // read fsw read previous fsw olcak
-    
-    uint8_t oldFSW = eeprom.readCurrentFswState();
-    uint8_t newFSW = 0;
+    uint8_t preFSW = eeprom.readPreviousFswState();
+    uint8_t curFSW = eeprom.readCurrentFswState();
+    uint8_t newFSW =0;
     float altitude = telemetryValues.altitude/loopCounter - baseAltitude;
+    unsigned int curLight = lightValue/loopCounter;
     
-    switch (oldFSW) {
+//    Serial.print(altitude);
+//    Serial.print("-");
+  Serial.print(curLight);
+    Serial.print("-");
+    Serial.print(curFSW);
+    Serial.print(" ");
+    
+    switch (curFSW) {
         case 0:
-            if(controlPreFlightTest(altitude, oldFSW));
-            else
-                newFSW = 1;
+            newFSW =  decideLaunchWait(altitude, curLight, curFSW);
             break;
         case 1:
-            if(controlLaunchWait(altitude, oldFSW));
-            else
-                newFSW = 2;
+            newFSW =  decideAscent(altitude, curLight,  curFSW);
             break;
         case 2:
-            if(controlAscent(altitude, oldFSW));
-            else
-                newFSW = 3;
+            newFSW =  decideRocketDeployment(altitude, curLight,  curFSW);
             break;
         case 3:
-            if(controlRocketDeployment(altitude, oldFSW))
-            {
-                //telemetriyi kaydet
-            }
-            else
-                newFSW = 4;
+            newFSW =  decideStabilization(altitude, curLight,  curFSW);
             break;
         case 4:
-            if(controlStabilization(altitude, oldFSW))
-            {
-            
-            }
-            else
-                newFSW = 5;
+            newFSW =  decideSeparation(altitude, curLight,  curFSW);
             break;
-
         case 5:
-            if(controlSeparation(altitude, oldFSW))
-            {
-                servo.turn(0);
-            }
-            else
-                newFSW = 6;
+            newFSW =  decideDescent(altitude, curLight,  curFSW);
             break;
-
         case 6:
-            if(controlDescent(altitude, oldFSW));
-            else
-                newFSW = 7;
+            newFSW =  decideLanded(altitude, curLight,  curFSW);
             break;
-
         case 7:
-            if(controlLanded(altitude, oldFSW))
-            {
-            //telemetriyi kaydet
+            newFSW =  curFSW;
+            digitalWrite(PIN_BUZZER, HIGH);
+            eeprom.writeData(MEM_EEPROM_STATE  , EEPROM_STATE_LOCK);
+            if (eeprom.readData(MEM_CAMERA_STATUS) == 1) {
+                camera.stopRecord(500);
+                camera.close(1000);
+                eeprom.writeData(MEM_CAMERA_STATUS, 2);
             }
+            
             break;
-
             
         default:
+            newFSW =  curFSW;
+            
             break;
     }
     
-        return newFSW;
+    return newFSW;
     
-    //    uint8_t currentFSW = telemetryValues.FSWstatus;
-    //    bool diffFSWcheck = ((currentFSW - oldFSW)>1) ? true : false ;
-//    if (diffFSWcheck) {
-//        
-//    }
-//    else
-//    {
-//        
-//    }
-    
+    }
 
-}
-
-bool ITUSAT_CORE::controlPreFlightTest(float currentAlt, int fswState)
+uint8_t ITUSAT_CORE::decideLaunchWait(float altitude, unsigned int light, uint8_t currentFSW)
 {
-    if (((currentAlt)<FSW_PREFLIGHT_ALTITUDE ) && (fswState == 0) && (lightValue > FSW_LIGHT_THRESHOLD) ) {
-        return true ;
+    if (light<FSW_LIGHT_THRESHOLD  && altitude < FSW_LAUNCHWAIT_ALTITUDE) {
+        if (eeprom.readData(MEM_CAMERA_STATUS) == 0) {
+            camera.open(2000);
+            camera.startRecord(1000);
+            eeprom.writeData(MEM_CAMERA_STATUS , 1);
+        }
+        return 1;
     }
     else
-        return false;
+        return currentFSW;
 }
-bool ITUSAT_CORE::controlLaunchWait(float currentAlt, int fswState)
+
+
+uint8_t ITUSAT_CORE::decideAscent(float altitude, unsigned int light, uint8_t currentFSW)
 {
-    if ((lightValue < FSW_LIGHT_THRESHOLD) && ((currentAlt) < FSW_LAUNCHWAIT_ALTITUDE ) && (fswState > 0) ) {
-        return true;
+    if (light<FSW_LIGHT_THRESHOLD  && altitude > FSW_LAUNCHWAIT_ALTITUDE) {
+
+        
+        return 2;
     }
     else
-        return false;
-}
-bool ITUSAT_CORE::controlAscent(float currentAlt, int fswState)
-{
-    if (((currentAlt) > FSW_LAUNCHWAIT_ALTITUDE ) && (lightValue < FSW_LIGHT_THRESHOLD) && (fswState > 1)  ) {
-        return true;
-    }
-    else
-        return false;
-
+         return currentFSW;
 }
 
-bool ITUSAT_CORE::controlRocketDeployment(float currentAlt, int fswState)
+uint8_t ITUSAT_CORE::decideRocketDeployment(float altitude, unsigned int light, uint8_t currentFSW)
 {
-
-    uint8_t isRocketDeployed = eeprom.readData(MEM_FSW_ROCKET_DEPLOY);
-    
-    if (((currentAlt) > FSW_MIN_DEPLOYMENT_ALT ) && (lightValue > FSW_LIGHT_THRESHOLD) && (fswState > 2) && (isRocketDeployed == 0) ) {
+    if (light > FSW_LIGHT_THRESHOLD  && altitude > FSW_LAUNCHWAIT_ALTITUDE) {
         eeprom.writeData(MEM_FSW_ROCKET_DEPLOY, 1);
-        return true;
+      //  saveRocketDeploymentTelemetry();
+        return 3;
     }
     else
-        return false;
-
+         return currentFSW;
 }
 
-bool ITUSAT_CORE::controlStabilization(float currentAlt, int  fswState)
+uint8_t ITUSAT_CORE::decideStabilization(float altitude, unsigned int light, uint8_t currentFSW)
 {
-    if (((currentAlt) > FSW_SEPERATION_METERS_MAX ) && (fswState > 3)  ) {
-        return true;
+    if (eeprom.readData(MEM_FSW_ROCKET_DEPLOY) == 1) {
+        
+        return 4;
     }
     else
-        return false;
+         return currentFSW;
 }
-bool ITUSAT_CORE::controlSeparation(float currentAlt, int  fswState)
-{
-    uint8_t isCansatSeperated = eeprom.readData(MEM_FSW_SEPERATION);
 
-    if (((currentAlt) < FSW_SEPERATION_METERS_MAX ) &&((currentAlt) > FSW_SEPERATION_METERS_MIN )&& (fswState >4) && isCansatSeperated == 0 ) {
+uint8_t ITUSAT_CORE::decideSeparation(float altitude, unsigned int light, uint8_t currentFSW)
+{
+    if (altitude <FSW_SEPERATION_METERS_MAX) {
+        servo.myservo.attach(PIN_SERVO);
+        servo.turn(0);
         eeprom.writeData(MEM_FSW_SEPERATION, 1);
-        return true;
+        return 5;
     }
     else
-        return false;
-    
-}
-bool ITUSAT_CORE::controlDescent(float currentAlt, int  fswState)
-{
-    if (((currentAlt) < FSW_SEPERATION_METERS ) && (fswState >5) ) {
-        return true;
-    }
-    else
-        return false;
-    
+         return currentFSW;
 }
 
-bool ITUSAT_CORE::controlLanded(float currentAlt, int  fswState)
+uint8_t ITUSAT_CORE::decideDescent(float altitude, unsigned int light, uint8_t currentFSW)
 {
-    ///
-    return false;
+    if (eeprom.readData(MEM_FSW_SEPERATION) == 1) {
+        
+        return 6;
+    }
+    else
+         return currentFSW;
 }
+
+uint8_t ITUSAT_CORE::decideLanded(float altitude, unsigned int light, uint8_t currentFSW)
+{
+    uint8_t landedcounter = eeprom.readData(MEM_FSW_LAND_COUNTER);
+    if (altitude < FSW_LAND_DECIDE_METERS)
+        eeprom.writeData(MEM_FSW_LAND_COUNTER, landedcounter++);
+    if (landedcounter > 5) {
+        return 7;
+    }
+    else
+         return currentFSW;
+}
+
+
 
 
 // others

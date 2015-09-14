@@ -31,6 +31,13 @@ void ITUSAT_XBEE::addEnvelope(uint8_t mode)
         
 }
 
+void ITUSAT_XBEE::addGPSData(float data)
+{
+    Serial1.print("\"");
+    Serial1.print(data,5);
+    Serial1.print("\",");
+}
+
 void ITUSAT_XBEE::addData(int data)
 {
     Serial1.print("\"");

@@ -23,6 +23,7 @@ void ITUSAT_CAMERA::prepare(int p_open,int p_cont,int p_sta){
     digitalWrite(P_status,      LOW);
     isOpen =      false;
     isRecording =   false;
+    close(1000);
 }
 void ITUSAT_CAMERA::open(int time){
     
@@ -64,6 +65,27 @@ void ITUSAT_CAMERA::stopRecord(int time){
     delay(500);
     
     isRecording = false;
+
+    
+}
+
+void ITUSAT_CAMERA::open_wtimer(unsigned long time)
+{
+    if (time == 0 ) {
+         digitalWrite(P_openclose,   LOW);
+    }
+    else if (time >= 2)
+    {
+        digitalWrite(P_openclose,   HIGH);
+        delay(30);
+        startRecord(1000);
+    }
+
+    
+}
+
+void ITUSAT_CAMERA::record_wtimer(unsigned long time)
+{
 
     
 }
